@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nxm-config — Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper: #060b1a;
+      --color-paper-2: #0c1428;
+      --color-ink: #f4f7ff;
+      --color-muted: #a9b7d0;
+      --color-soft: #c5d0e5;
+      --color-rule: rgba(244, 247, 255, 0.12);
+      --color-rule-solid: rgba(169, 183, 208, 0.32);
+      --color-accent: #42e8ff;
+      --color-accent-tint: rgba(66, 232, 255, 0.10);
+      --color-link: #a78bfa;
+      --font-sans: 'Geist', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      min-height: 100vh;
+      padding: 3rem 2rem;
+      background: var(--color-paper);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+    }
+    .container { width: 100%; max-width: 1280px; margin: 0 auto; }
+    .header { margin-bottom: 2.5rem; }
+    .header-eyebrow {
+      margin-bottom: 0.75rem;
+      color: var(--color-accent);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin-bottom: 0.5rem;
+      color: var(--color-ink);
+      font-family: var(--font-serif);
+      font-size: clamp(1.75rem, 3vw + 1rem, 2.5rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .subtitle { max-width: 58ch; color: var(--color-muted); font-size: 1rem; line-height: 1.55; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { display: block; width: 100%; min-width: 1280px; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 0.9fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .card {
+      border: 1px solid var(--color-rule);
+      border-radius: 6px;
+      padding: 1.25rem;
+      background: var(--color-paper-2);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.875rem;
+      padding-bottom: 0.875rem;
+      border-bottom: 1px solid var(--color-rule);
+    }
+    .card-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--color-muted); }
+    .card-dot.accent { background: var(--color-accent); }
+    .card-dot.link { background: var(--color-link); }
+    .card h3 { color: var(--color-ink); font-size: 0.875rem; font-weight: 600; }
+    .card ul { list-style: none; color: var(--color-muted); font-size: 0.8125rem; line-height: 1.55; }
+    .card li { position: relative; margin-bottom: 0.3rem; padding-left: 0.875rem; }
+    .card li::before { content: '—'; position: absolute; left: 0; color: var(--color-rule-solid); font-size: 0.75rem; }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-rule);
+      color: var(--color-soft);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+    }
+    @media (max-width: 800px) {
+      body { padding: 2rem 1rem; }
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <p class="header-eyebrow">Architecture · Diagram Design</p>
+      <h1>A small facade over focused configuration modules</h1>
+      <p class="subtitle">Applications call one public Rust surface. Internal modules resolve paths, parse settings, load files, and handle MCP server configuration.</p>
+    </header>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="nxm-config-architecture-title nxm-config-architecture-desc">
+        <title id="nxm-config-architecture-title">nxm-config architecture</title>
+        <desc id="nxm-config-architecture-desc">Applications call the nxm-config public API, which delegates to internal path, settings, loader, and MCP configuration modules that read configuration files and environment overrides.</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#a9b7d0"/></marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#42e8ff"/></marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#a78bfa"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#060b1a"/>
+
+        <!-- Arrows are painted before nodes so every connector stays behind the boxes. -->
+        <line x1="224" y1="304" x2="304" y2="304" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <rect x="236" y="276" width="48" height="12" rx="2" fill="#060b1a"/>
+        <text x="260" y="285" fill="#a78bfa" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CALL</text>
+
+        <line x1="544" y1="304" x2="640" y2="304" stroke="#42e8ff" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <rect x="568" y="276" width="48" height="12" rx="2" fill="#060b1a"/>
+        <text x="592" y="285" fill="#42e8ff" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">USE</text>
+
+        <line x1="912" y1="272" x2="1000" y2="272" stroke="#42e8ff" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+        <rect x="932" y="244" width="48" height="12" rx="2" fill="#060b1a"/>
+        <text x="956" y="253" fill="#42e8ff" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">I/O</text>
+
+        <path d="M 1000,432 H 964 Q 956,432 956,424 V 336 Q 956,328 948,328 H 912" fill="none" stroke="#a9b7d0" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="962" y="404" width="32" height="12" rx="2" fill="#060b1a"/>
+        <text x="978" y="413" fill="#a9b7d0" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">READ</text>
+
+        <!-- Consumer -->
+        <rect x="48" y="260" width="176" height="88" rx="6" fill="#060b1a"/>
+        <rect x="48" y="260" width="176" height="88" rx="6" fill="rgba(169,183,208,0.10)" stroke="#c5d0e5" stroke-width="1"/>
+        <rect x="56" y="268" width="32" height="12" rx="2" fill="transparent" stroke="rgba(197,208,229,0.40)" stroke-width="0.8"/>
+        <text x="72" y="277" fill="#c5d0e5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
+        <text x="136" y="302" fill="#f4f7ff" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Platform consumers</text>
+        <text x="136" y="326" fill="#a9b7d0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Services · binaries · tests</text>
+
+        <!-- Public API: the single focal element -->
+        <rect x="304" y="240" width="240" height="128" rx="6" fill="#060b1a"/>
+        <rect x="304" y="240" width="240" height="128" rx="6" fill="rgba(66,232,255,0.10)" stroke="#42e8ff" stroke-width="1.2"/>
+        <rect x="312" y="248" width="48" height="12" rx="2" fill="transparent" stroke="rgba(66,232,255,0.50)" stroke-width="0.8"/>
+        <text x="336" y="257" fill="#42e8ff" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+        <text x="424" y="292" fill="#f4f7ff" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">nxm-config</text>
+        <text x="424" y="314" fill="#c5d0e5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Public Rust surface</text>
+        <text x="424" y="338" fill="#a9b7d0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">load · save · resolve</text>
+
+        <!-- Core modules -->
+        <rect x="640" y="224" width="272" height="168" rx="6" fill="#060b1a"/>
+        <rect x="640" y="224" width="272" height="168" rx="6" fill="#10192d" stroke="#8ea4c7" stroke-width="1"/>
+        <rect x="648" y="232" width="40" height="12" rx="2" fill="transparent" stroke="rgba(142,164,199,0.40)" stroke-width="0.8"/>
+        <text x="668" y="241" fill="#c5d0e5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CORE</text>
+        <text x="776" y="272" fill="#f4f7ff" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Implementation modules</text>
+        <text x="776" y="300" fill="#a9b7d0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">paths.rs</text>
+        <text x="776" y="322" fill="#a9b7d0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">settings.rs</text>
+        <text x="776" y="344" fill="#a9b7d0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">loader.rs</text>
+        <text x="776" y="366" fill="#a9b7d0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">mcp_config.rs</text>
+
+        <!-- Config store -->
+        <rect x="1000" y="224" width="208" height="96" rx="6" fill="#060b1a"/>
+        <rect x="1000" y="224" width="208" height="96" rx="6" fill="rgba(244,247,255,0.06)" stroke="#a9b7d0" stroke-width="1"/>
+        <rect x="1008" y="232" width="32" height="12" rx="2" fill="transparent" stroke="rgba(169,183,208,0.40)" stroke-width="0.8"/>
+        <text x="1024" y="241" fill="#c5d0e5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILE</text>
+        <text x="1104" y="272" fill="#f4f7ff" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Configuration files</text>
+        <text x="1104" y="298" fill="#a9b7d0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">TOML · JSON</text>
+
+        <!-- Environment input -->
+        <rect x="1000" y="384" width="208" height="96" rx="6" fill="#060b1a"/>
+        <rect x="1000" y="384" width="208" height="96" rx="6" fill="rgba(169,183,208,0.10)" stroke="#c5d0e5" stroke-width="1"/>
+        <rect x="1008" y="392" width="32" height="12" rx="2" fill="transparent" stroke="rgba(197,208,229,0.40)" stroke-width="0.8"/>
+        <text x="1024" y="401" fill="#c5d0e5" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ENV</text>
+        <text x="1104" y="432" fill="#f4f7ff" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Environment</text>
+        <text x="1104" y="458" fill="#a9b7d0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">NXM_* overrides</text>
+
+        <!-- Legend -->
+        <line x1="40" y1="640" x2="1240" y2="640" stroke="rgba(244,247,255,0.12)" stroke-width="0.8"/>
+        <text x="40" y="664" fill="#a9b7d0" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+        <rect x="128" y="654" width="14" height="10" rx="2" fill="rgba(169,183,208,0.10)" stroke="#c5d0e5" stroke-width="1"/>
+        <text x="150" y="663" fill="#a9b7d0" font-size="8.5" font-family="'Geist', sans-serif">Consumer</text>
+        <rect x="280" y="654" width="14" height="10" rx="2" fill="rgba(66,232,255,0.10)" stroke="#42e8ff" stroke-width="1"/>
+        <text x="302" y="663" fill="#a9b7d0" font-size="8.5" font-family="'Geist', sans-serif">Public API</text>
+        <rect x="432" y="654" width="14" height="10" rx="2" fill="#10192d" stroke="#8ea4c7" stroke-width="1"/>
+        <text x="454" y="663" fill="#a9b7d0" font-size="8.5" font-family="'Geist', sans-serif">Core module</text>
+        <rect x="608" y="654" width="14" height="10" rx="2" fill="rgba(244,247,255,0.06)" stroke="#a9b7d0" stroke-width="1"/>
+        <text x="630" y="663" fill="#a9b7d0" font-size="8.5" font-family="'Geist', sans-serif">File store</text>
+        <rect x="760" y="654" width="14" height="10" rx="2" fill="rgba(169,183,208,0.10)" stroke="#c5d0e5" stroke-width="1"/>
+        <text x="782" y="663" fill="#a9b7d0" font-size="8.5" font-family="'Geist', sans-serif">Environment</text>
+        <line x1="940" y1="659" x2="968" y2="659" stroke="#42e8ff" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <text x="980" y="663" fill="#a9b7d0" font-size="8.5" font-family="'Geist', sans-serif">Primary flow</text>
+      </svg>
+    </div>
+
+    <section class="cards" aria-label="Architecture summary">
+      <article class="card">
+        <div class="card-header"><span class="card-dot accent"></span><h3>Stable public surface</h3></div>
+        <ul>
+          <li><code>lib.rs</code> re-exports the supported types and functions.</li>
+          <li>Internal modules stay replaceable behind that facade.</li>
+          <li>Consumers depend on one crate, not on file conventions.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <div class="card-header"><span class="card-dot"></span><h3>Two configuration families</h3></div>
+        <ul>
+          <li>General platform settings use typed TOML models.</li>
+          <li>MCP helpers resolve JSON-first server configuration.</li>
+          <li>Both surfaces use the same default hidden home directory.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <div class="card-header"><span class="card-dot link"></span><h3>Explicit inputs</h3></div>
+        <ul>
+          <li>Files supply durable defaults.</li>
+          <li><code>NXM_*</code> variables override selected values.</li>
+          <li>Every result is validated before it reaches callers.</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <span>nxm-config · Architecture Overview</span>
+      <span>Diagram Design · doc-wide</span>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nxm-config — Documentazione</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper: #060b1a;
+      --color-paper-2: #0c1428;
+      --color-ink: #f4f7ff;
+      --color-muted: #a9b7d0;
+      --color-soft: #c5d0e5;
+      --color-rule: rgba(244, 247, 255, 0.14);
+      --color-accent: #42e8ff;
+      --color-link: #a78bfa;
+      --font-sans: 'Geist', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body { min-height: 100vh; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); }
+    .container { max-width: 1000px; margin: 0 auto; padding: 3rem 1.5rem; }
+    header { text-align: center; margin-bottom: 3rem; }
+    .banner { width: 100%; max-width: 1000px; height: auto; border-radius: 10px; border: 1px solid var(--color-rule); display: block; margin: 0 auto 1.5rem; }
+    .eyebrow { color: var(--color-accent); font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; }
+    h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw + 1rem, 3rem); font-weight: 400; letter-spacing: -0.02em; line-height: 1.12; margin: 0.5rem 0 1rem; }
+    .lead { max-width: 64ch; margin: 0 auto 2rem; color: var(--color-muted); font-size: 1.05rem; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .card { border: 1px solid var(--color-rule); border-radius: 8px; padding: 1.5rem; background: var(--color-paper-2); }
+    .card .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); display: inline-block; margin-right: 0.5rem; }
+    .card h3 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--color-ink); }
+    .card p { font-size: 0.875rem; color: var(--color-muted); line-height: 1.55; margin-bottom: 1rem; }
+    .card a { color: var(--color-link); text-decoration: none; border-bottom: 1px solid transparent; }
+    .card a:hover { border-color: var(--color-link); }
+    .mono { font-family: var(--font-mono); font-size: 0.8125rem; }
+    .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--color-rule); color: var(--color-soft); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+    @media (max-width: 640px) { .container { padding: 2rem 1rem; } .banner { border-radius: 8px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <picture>
+        <source srcset="assets/nexum-banner.webp" type="image/webp">
+        <img src="assets/nexum-banner.png" alt="Nexum-AI banner" class="banner" width="1000" height="559">
+      </picture>
+      <p class="eyebrow">nxm-config · Documentazione</p>
+      <h1>Shared configuration for the NXM platform</h1>
+      <p class="lead">Libreria Rust di configurazione condivisa per la piattaforma NXM: percorsi, impostazioni tipizzate, caricamento TOML e helper JSON-first per la configurazione dei server MCP.</p>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <span class="dot"></span>
+        <h3>Architettura</h3>
+        <p>Facciata pubblica stabile, moduli interni e flusso di dipendenze.</p>
+        <a href="diagrams/architecture.html">Apri il diagramma →</a>
+      </article>
+      <article class="card">
+        <span class="dot"></span>
+        <h3>Precedenza configurazione</h3>
+        <p>File TOML, valori di default e override ambientali <code>NXM_*</code>.</p>
+        <a href="diagrams/flow.html">Apri il diagramma →</a>
+      </article>
+      <article class="card">
+        <span class="dot"></span>
+        <h3>Layout moduli</h3>
+        <p>Albero di <code>lib.rs</code>, percorsi, impostazioni, caricatore e configurazione MCP.</p>
+        <a href="diagrams/layout.html">Apri il diagramma →</a>
+      </article>
+      <article class="card">
+        <span class="dot"></span>
+        <h3>README / API</h3>
+        <p>Installazione, esempi d'uso, riferimento API e contributi.</p>
+        <a href="../README.md">Leggi il README →</a>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <span>nxm-config · MIT</span>
+      <span>Diagram Design · doc-wide</span>
+    </footer>
+  </div>
+</body>
+</html>

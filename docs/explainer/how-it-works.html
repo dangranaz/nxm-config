@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nxm-config — Come funziona</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper: #060b1a;
+      --color-paper-2: #0c1428;
+      --color-ink: #f4f7ff;
+      --color-muted: #a9b7d0;
+      --color-soft: #c5d0e5;
+      --color-rule: rgba(244, 247, 255, 0.14);
+      --color-accent: #42e8ff;
+      --color-link: #a78bfa;
+      --font-sans: 'Geist', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body { min-height: 100vh; padding: 3rem 2rem; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); }
+    .container { max-width: 720px; margin: 0 auto; }
+    header { margin-bottom: 2.5rem; text-align: center; }
+    .banner { width: 100%; max-width: 720px; height: auto; border-radius: 10px; border: 1px solid var(--color-rule); display: block; margin: 0 auto 1.5rem; }
+    .eyebrow { color: var(--color-accent); font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.75rem, 3vw + 1rem, 2.5rem); font-weight: 400; letter-spacing: -0.02em; line-height: 1.12; margin: 0.5rem 0 1rem; }
+    .lead { color: var(--color-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; }
+    h2 { font-family: var(--font-serif); font-size: 1.25rem; margin: 2rem 0 0.75rem; color: var(--color-ink); }
+    p { color: var(--color-ink); line-height: 1.6; margin-bottom: 1rem; }
+    code { font-family: var(--font-mono); font-size: 0.875rem; background: rgba(244,247,255,0.06); padding: 0.15rem 0.4rem; border-radius: 4px; }
+    ul { color: var(--color-ink); line-height: 1.6; margin-bottom: 1rem; padding-left: 1.25rem; }
+    .card { border: 1px solid var(--color-rule); border-radius: 8px; padding: 1.25rem; background: var(--color-paper-2); margin-bottom: 1rem; }
+    .card .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); display: inline-block; margin-right: 0.5rem; vertical-align: middle; }
+    .footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--color-rule); color: var(--color-soft); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; }
+    @media (max-width: 640px) { body { padding: 2rem 1rem; } .banner { border-radius: 8px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <picture>
+        <source srcset="../assets/nexum-banner.webp" type="image/webp">
+        <img src="../assets/nexum-banner.png" alt="Nexum-AI banner" class="banner" width="720" height="379">
+      </picture>
+      <p class="eyebrow">nxm-config · Explainer</p>
+      <h1>Come funziona la configurazione NXM</h1>
+      <p class="lead">Una lettura unica e tipizzata della configurazione della piattaforma NXM, con override ambientali espliciti e validazione prima che il valore raggiunga i chiamanti.</p>
+    </header>
+
+    <section>
+      <h2>1. Scoperta della root</h2>
+      <p><code>ConfigPaths::discover()</code> legge <code>NXM_CONFIG_HOME</code> se impostata; altrimenti usa <code>~/.nxmconfig</code>. <code>with_root()</code> è disponibile per test e deployment isolati.</p>
+    </section>
+
+    <section>
+      <h2>2. Directory e file</h2>
+      <div class="card"><span class="dot"></span><code>provider/</code> — configurazione generata dei provider</div>
+      <div class="card"><span class="dot"></span><code>logs/</code> — log rotanti</div>
+      <div class="card"><span class="dot"></span><code>data/</code> — dati applicativi</div>
+      <div class="card"><span class="dot"></span><code>config.toml</code> — configurazione generale</div>
+      <p><code>ensure_directories()</code> crea le directory mancanti; <code>load_or_create_config()</code> scrive un file di default quando <code>config.toml</code> non esiste.</p>
+    </section>
+
+    <section>
+      <h2>3. Modello tipizzato</h2>
+      <p><code>GeneralConfig</code> aggrega <code>ServerSettings</code>, <code>DatabaseSettings</code> e <code>GenerationSettings</code>. I driver supportati sono <code>sqlite</code>, <code>postgres</code> e <code>mongodb</code>.</p>
+    </section>
+
+    <section>
+      <h2>4. Precedenza e override</h2>
+      <p>I valori del file TOML vincono sulle integrazioni di default. Le variabili <code>NXM_*</code> sovrascrivono le chiavi supportate: <code>NXM_SERVER_HOST</code>, <code>NXM_SERVER_PORT</code>, <code>NXM_CORS_ORIGINS</code>, <code>NXM_DATABASE_DRIVER</code>, <code>NXM_DATABASE_URL</code>. Il risultato viene validato prima di essere restituito.</p>
+    </section>
+
+    <section>
+      <h2>5. Configurazione MCP</h2>
+      <p>I file di configurazione per i server MCP vivono in <code>~/.nxmconfig/&lt;nome&gt;_config.json</code> (preferito, standard di mercato) oppure TOML. Il crate risolve percorso e formato, valida JSON/TOML e offre helper di lettura/scrittura.</p>
+    </section>
+
+    <footer class="footer">
+      <span>nxm-config · MIT</span>
+      <span>Diagram Design · doc-wide</span>
+    </footer>
+  </div>
+</body>
+</html>
